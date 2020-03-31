@@ -1,0 +1,177 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the     -->
+<!-- browser's rendering engine into                -->
+<!-- "Standards Mode". Replacing this declaration   -->
+<!-- with a "Quirks Mode" doctype is not supported. -->
+
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <!--                                                               -->
+    <!-- Consider inlining CSS to reduce the number of requested files -->
+    <!--                                                               -->
+    <link type="text/css" rel="stylesheet" href="Highcost2.css">
+
+    <!--                                           -->
+    <!-- Any title is fine                         -->
+    <!--                                           -->
+    <div id="box">
+    <div id="container" style="width:100%;margin: 0 auto">
+    <title>USF Data: $title (High Cost=HCL, HCM, IAS, ICLS, LSS; Connect America Fund=FHCS, ISS, ICC, MobilityI, CACM, RBE)</title>
+    
+    <!--                                           -->
+    <!-- This script loads your compiled module.   -->
+    <!-- If you add any GWT meta tags, they must   -->
+    <!-- be added before this line.                -->
+    <!--                                           -->
+   
+    <script type="text/javascript" language="javascript" src="highcost2/highcost2.nocache.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="highcharts.js"></script>
+	<script type="text/javascript" src="highcharts-more.js"></script>
+    //<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+  </head>
+
+  <!--                                           -->
+  <!-- The body can have arbitrary html, or      -->
+  <!-- you can leave the body empty if you want  -->
+  <!-- to create a completely dynamic UI.        -->
+  <!--                                           -->
+  <body>
+
+    <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+
+<noscript>
+      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        Your web browser must have JavaScript enabled
+        in order for this application to display correctly.
+      </div>
+    </noscript>
+
+    
+    <script>
+    
+    $(function () {
+   Highcharts.setOptions({
+		lang: {
+			thousandsSep: ','
+		}
+	});
+   $('#container').highcharts({        
+        credits: {
+            text: 'PolicyCharts.com. Source: USAC High Cost Disbursement Data (June 2016)',
+            style: {
+       			width: 360
+    		}
+        },
+        
+        xAxis: {
+            categories: [$Datedata],
+             tickmarkPlacement: 'on',  
+            type: 'datetime',
+           
+        },
+    		yAxis: {
+                title: {
+                    text: 'USD$'
+                },
+               labels: {
+                formatter: function () {
+                    return '$' + this.axis.defaultLabelFormatter.call(this);
+                    
+              }
+              }
+
+            },
+        title: {
+                text: '$title'
+            },
+        subtitle: {
+        		text: '$state, $form, $sac'
+        },
+        plotOptions: {
+            areaspline: {
+                stacking: 'normal',
+                marker: {
+           		 		enabled: false
+          			}
+            }
+        },
+    
+        series: [
+        // first stack 
+         {
+            type: 'areaspline',
+            data: [$HCLdata],
+            stack: 0,
+            name: 'HCL'
+        },
+        {
+            type: 'areaspline',
+            data: [$HCMdata],
+            stack: 0,
+            name: 'HCM'
+        }, 
+        {
+            type: 'areaspline',
+            data: [$IASdata],
+            stack: 0,
+            name: 'IAS'
+        },
+        {
+            type: 'areaspline',
+            data: [$ICLSdata],
+            stack: 0,
+            name: 'ICLS'
+		}, 
+        {
+            type: 'areaspline',
+            data: [$LSSdata],
+            stack: 0,
+            name: 'LSS'
+        },
+         {
+            type: 'areaspline',
+            data: [$FHCSdata],
+            stack: 0,
+            name: 'FHCS'
+        },
+         {
+            type: 'areaspline',
+            data: [$ISSdata],
+            stack: 0,
+            name: 'ISS'
+        },
+         {
+            type: 'areaspline',
+            data: [$ICCdata],
+            stack: 0,
+            name: 'ICC'
+        },
+         {
+            type: 'areaspline',
+            data: [$MobilityIdata],
+            stack: 0,
+            name: 'MobilityI'
+        },
+         {
+            type: 'areaspline',
+            data: [$CACMdata],
+            stack: 0,
+            name: 'CACM'
+        },
+         {
+            type: 'areaspline',
+            data: [$RBEdata],
+            stack: 0,
+            name: 'RBE'
+        }]
+    });
+});
+    </script>
+    
+    </div>
+  </body>
+</html>
