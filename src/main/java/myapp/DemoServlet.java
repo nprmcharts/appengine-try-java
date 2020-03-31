@@ -35,7 +35,7 @@ public class DemoServlet extends HttpServlet {
       throws IOException {
     resp.setContentType("text/plain");
     resp.getWriter().println("{ \"name\": \"World\" }");
-    run(); 
+    run();
   }
 
   public void MakeGraphFile(String filename) throws IOException  {
@@ -101,7 +101,7 @@ csvfile[i][15]	dateUTC 	 **/
 
 	try {
 		//filequote = "\"" + filename + "\"";
-		URL link = new URL(filename);
+		URL link = new URL("https://storage.googleapis.com/tpieconomics-public/bucketfiles.csv");
 		//URL link = new URL("https://storage.googleapis.com/highcostbq/100003.csv");
 		Scanner detailsIn =new Scanner(link.openStream());
 		//Scanner detailsIn =new Scanner(new FileReader(System.getProperty("user.dir") + "/359060c.csv"));
@@ -245,7 +245,7 @@ csvfile[i][15]	dateUTC 	 **/
 
     	//http://stackoverflow.com/questions/5936003/write-html-file-using-java
 
-    	File htmlTemplateFile = new File("template.html");
+    	File htmlTemplateFile = new File("https://storage.googleapis.com/tpieconomics-public/template.html");
     	String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
 
     	htmlString = htmlString.replace("$title", title);
