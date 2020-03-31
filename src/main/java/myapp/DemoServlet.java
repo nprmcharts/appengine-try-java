@@ -35,7 +35,7 @@ public class DemoServlet extends HttpServlet {
       throws IOException {
     resp.setContentType("text/plain");
     resp.getWriter().println("{ \"name\": \"World\" }");
-    resp.run(); 
+    run(); 
   }
 
   public void MakeGraphFile(String filename) throws IOException  {
