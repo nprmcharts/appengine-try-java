@@ -22,10 +22,11 @@ limitations under the License.
   <artifactId>appengine-try-java</artifactId>
 
   <!-- Parent POM defines common plugins and properties. -->
-  <parent>
-    <groupId>com.google.cloud.samples</groupId>
-    <artifactId>shared-configuration</artifactId>
-    <version>1.0.1</version>
+  <parent> <!-- Only used for testing - NOT REQUIRED -->
+    <groupId>com.example.standard.gettingstarted</groupId>
+    <artifactId>bookshelf-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../</relativePath>
   </parent>
 
   <properties>
@@ -49,6 +50,7 @@ limitations under the License.
      </dependency>
    </dependencies>
 </dependencyManagement>
+
   <dependencies>
     <!-- Compile/runtime dependencies -->
     <dependency>
