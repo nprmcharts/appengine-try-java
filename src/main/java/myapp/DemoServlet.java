@@ -16,75 +16,68 @@
 
 package myapp;
 
-import java.io.IOException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Random;
-import java.util.*;
-import java.io.*;
-import java.util.regex.Pattern;
-import java.io.FileReader;
-import java.util.Scanner;
-import java.net.URL;
-import org.apache.commons.io.FileUtils;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryOptions;
+import com.google.cloud.bigquery.DatasetInfo;
+import com.google.cloud.bigquery.Field;
 import com.google.cloud.bigquery.FieldValueList;
-import com.google.cloud.bigquery.Job;
-import com.google.cloud.bigquery.JobId;
-import com.google.cloud.bigquery.JobInfo;
+import com.google.cloud.bigquery.InsertAllRequest;
+import com.google.cloud.bigquery.InsertAllResponse;
+import com.google.cloud.bigquery.LegacySQLTypeName;
 import com.google.cloud.bigquery.QueryJobConfiguration;
-import com.google.cloud.bigquery.TableResult;
-import java.util.UUID;
+import com.google.cloud.bigquery.Schema;
+import com.google.cloud.bigquery.StandardTableDefinition;
+import com.google.cloud.bigquery.TableId;
+import com.google.cloud.bigquery.TableInfo;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * A snippet for Google Cloud BigQuery showing how to create a BigQuery dataset and table. Once
+ * created, the snippet streams data into the table and then queries it.
+ * https://github.com/googleapis/google-cloud-java/blob/master/google-cloud-examples/src/main/java/com/google/cloud/examples/bigquery/snippets/InsertDataAndQueryTable.java
+ */
 public class DemoServlet {
-  public static void main(String... args) throws Exception {
-    // [START bigquery_simple_app_client]
+
+  public static void main(String... args) throws InterruptedException {
+    // Create a service instance
     BigQuery bigquery = BigQueryOptions.getDefaultInstance().getService();
-    // [END bigquery_simple_app_client]
-    // [START bigquery_simple_app_query]
+
+    // Create a dataset
+    String datasetId = "my_dataset_id";
+    bigquery.create(DatasetInfo.newBuilder(datasetId).build());
+
+    TableId tableId = TableId.of(datasetId, "my_table_id");
+    // Table field definition
+    Field stringField = Field.of("StringField", LegacySQLTypeName.STRING);
+    // Table schema definition
+    Schema schema = Schema.of(stringField);
+    // Create a table
+    StandardTableDefinition tableDefinition = StandardTableDefinition.of(schema);
+    bigquery.create(TableInfo.of(tableId, tableDefinition));
+
+    // Define rows to insert
+    Map<String, Object> firstRow = new HashMap<>();
+    Map<String, Object> secondRow = new HashMap<>();
+    firstRow.put("StringField", "value1");
+    secondRow.put("StringField", "value2");
+    // Create an insert request
+    InsertAllRequest insertRequest =
+        InsertAllRequest.newBuilder(tableId).addRow(firstRow).addRow(secondRow).build();
+    // Insert rows
+    InsertAllResponse insertResponse = bigquery.insertAll(insertRequest);
+    // Check if errors occurred
+    if (insertResponse.hasErrors()) {
+      System.out.println("Errors occurred while inserting rows");
+    }
+
+    // Create a query request
     QueryJobConfiguration queryConfig =
-        QueryJobConfiguration.newBuilder(
-                "SELECT "
-                    + "CONCAT('https://stackoverflow.com/questions/', CAST(id as STRING)) as url, "
-                    + "view_count "
-                    + "FROM `bigquery-public-data.stackoverflow.posts_questions` "
-                    + "WHERE tags like '%google-bigquery%' "
-                    + "ORDER BY favorite_count DESC LIMIT 10")
-            // Use standard SQL syntax for queries.
-            // See: https://cloud.google.com/bigquery/sql-reference/
-            .setUseLegacySql(false)
-            .build();
-
-    // Create a job ID so that we can safely retry.
-    JobId jobId = JobId.of(UUID.randomUUID().toString());
-    Job queryJob = bigquery.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
-
-    // Wait for the query to complete.
-    queryJob = queryJob.waitFor();
-
-    // Check for errors
-    if (queryJob == null) {
-      throw new RuntimeException("Job no longer exists");
-    } else if (queryJob.getStatus().getError() != null) {
-      // You can also look at queryJob.getStatus().getExecutionErrors() for all
-      // errors, not just the latest one.
-      throw new RuntimeException(queryJob.getStatus().getError().toString());
+        QueryJobConfiguration.newBuilder("SELECT * FROM my_dataset_id.my_table_id").build();
+    // Read rows
+    System.out.println("Table rows:");
+    for (FieldValueList row : bigquery.query(queryConfig).iterateAll()) {
+      System.out.println(row);
     }
-    // [END bigquery_simple_app_query]
-
-    // [START bigquery_simple_app_print]
-    // Get the results.
-    TableResult result = queryJob.getQueryResults();
-
-    // Print all pages of the results.
-    for (FieldValueList row : result.iterateAll()) {
-      String url = row.get("url").getStringValue();
-      long viewCount = row.get("view_count").getLongValue();
-      System.out.printf("url: %s views: %d%n", url, viewCount);
-    }
-    // [END bigquery_simple_app_print]
   }
 }
-// [END bigquery_simple_app_all]
